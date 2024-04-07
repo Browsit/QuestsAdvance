@@ -1,0 +1,5 @@
+advance:
+  root-name: Quests
+  background: "bookshelf"
+  show-toast: true
+  announce-chat: false
