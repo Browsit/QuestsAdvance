@@ -3,8 +3,8 @@ Advancements for Quests objectives
 
 ## Download
 Distributed through these fine vendors:
-- Lectern (TBA)
-- SpigotMC (TBA)
+- Lectern (https://lectern.browsit.org/resources/resource/54-questsadvance/)
+- SpigotMC (https://www.spigotmc.org/resources/questsadvance.136665/)
 
 ## License
 Copyright (c) 2026 Browsit, LLC. All rights reserved.
