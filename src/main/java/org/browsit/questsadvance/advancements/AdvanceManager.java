@@ -23,6 +23,7 @@ import com.fren_gor.ultimateAdvancementAPI.database.TeamProgression;
 import com.fren_gor.ultimateAdvancementAPI.exceptions.DuplicatedException;
 import com.fren_gor.ultimateAdvancementAPI.util.AdvancementKey;
 import com.fren_gor.ultimateAdvancementAPI.util.AdvancementUtils;
+import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.Quests;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.Quester;
@@ -277,70 +278,74 @@ public class AdvanceManager {
                 + ChatColor.GREEN;
 
         for (final BlockItemStack block : stage.getBlocksToBreak()) {
-            int goal = block.getAmount();
+            final int goal = block.getAmount();
             result.add(new ObjectiveData(ObjectiveType.BREAK_BLOCK, stageInfo +
                     BukkitLang.get("break").replace("<item>", BukkitItemUtil.getName(block))
                     .replace(": <count>", ""), goal, block.toString()));
         }
         for (final BlockItemStack block : stage.getBlocksToDamage()) {
-            int goal = block.getAmount();
+            final int goal = block.getAmount();
             result.add(new ObjectiveData(ObjectiveType.DAMAGE_BLOCK, stageInfo +
                     BukkitLang.get("damage").replace("<item>", BukkitItemUtil.getName(block))
                     .replace(": <count>", ""), goal, block.toString()));
         }
         for (final BlockItemStack block : stage.getBlocksToPlace()) {
-            int goal = block.getAmount();
+            final int goal = block.getAmount();
             result.add(new ObjectiveData(ObjectiveType.PLACE_BLOCK, stageInfo +
                     BukkitLang.get("place").replace("<item>", BukkitItemUtil.getName(block))
                     .replace(": <count>", ""), goal, block.toString()));
         }
         for (final BlockItemStack block : stage.getBlocksToUse()) {
-            int goal = block.getAmount();
+            final int goal = block.getAmount();
             result.add(new ObjectiveData(ObjectiveType.USE_BLOCK, stageInfo +
                     BukkitLang.get("use").replace("<item>", BukkitItemUtil.getName(block))
                     .replace(": <count>", ""), goal, block.toString()));
         }
         for (final BlockItemStack block : stage.getBlocksToCut()) {
-            int goal = block.getAmount();
+            final int goal = block.getAmount();
             result.add(new ObjectiveData(ObjectiveType.CUT_BLOCK, stageInfo +
                     BukkitLang.get("cut").replace("<item>", BukkitItemUtil.getName(block))
                     .replace(": <count>", ""), goal, block.toString()));
         }
         for (final ItemStack item : stage.getItemsToCraft()) {
-            int goal = item.getAmount();
+            final int goal = item.getAmount();
             result.add(new ObjectiveData(ObjectiveType.CRAFT_ITEM, stageInfo +
                     BukkitLang.get("craftItem").replace("<item>", BukkitItemUtil.getName(item))
                     .replace(": <count>", ""), goal, item.toString()));
         }
         for (final ItemStack item : stage.getItemsToSmelt()) {
-            int goal = item.getAmount();
+            final int goal = item.getAmount();
             result.add(new ObjectiveData(ObjectiveType.SMELT_ITEM, stageInfo +
                     BukkitLang.get("smeltItem").replace("<item>", BukkitItemUtil.getName(item))
                     .replace(": <count>", ""), goal, item.toString()));
         }
         for (final ItemStack item : stage.getItemsToEnchant()) {
-            int goal = item.getAmount();
+            final int goal = item.getAmount();
             result.add(new ObjectiveData(ObjectiveType.ENCHANT_ITEM, stageInfo +
                     BukkitLang.get("enchItem").replace("<item>", BukkitItemUtil.getName(item))
                     .replace(": <count>", ""), goal, item.toString()));
         }
         for (final ItemStack item : stage.getItemsToBrew()) {
-            int goal = item.getAmount();
+            final int goal = item.getAmount();
             result.add(new ObjectiveData(ObjectiveType.BREW_ITEM, stageInfo +
                     BukkitLang.get("brewItem").replace("<item>", BukkitItemUtil.getName(item))
                     .replace(": <count>", ""), goal, item.toString()));
         }
         for (final ItemStack item : stage.getItemsToConsume()) {
-            int goal = item.getAmount();
+            final int goal = item.getAmount();
             result.add(new ObjectiveData(ObjectiveType.CONSUME_ITEM, stageInfo +
                     BukkitLang.get("consumeItem").replace("<item>", BukkitItemUtil.getName(item))
                     .replace(": <count>", ""), goal, item.toString()));
         }
-        for (final ItemStack item : stage.getItemsToDeliver()) {
-            int goal = item.getAmount();
+        final List<ItemStack> items = stage.getItemsToDeliver();
+        final List<UUID> npcs = stage.getItemDeliveryTargets();
+        for (int i = 0; i < items.size() && i < npcs.size(); i++) {
+            final int goal = items.get(i).getAmount();
+            final UUID npc = npcs.get(i);
             result.add(new ObjectiveData(ObjectiveType.DELIVER_ITEM, stageInfo +
-                    BukkitLang.get("deliverItem").replace("<item>", BukkitItemUtil.getName(item))
-                    .replace(": <count>", ""), goal, item.toString()));
+                    BukkitLang.get("deliver").replace("<item>", BukkitItemUtil.getName(items.get(i)))
+                            .replace("<npc>", ((BukkitQuestsPlugin)plugin.getQuests()).getDependencies().getNpcName(npc))
+                            .replace(": <count>", ""), goal, items.get(i).toString()));
         }
         final List<EntityType> mobs = stage.getMobsToKill();
         final List<Integer> mobCounts = stage.getMobNumToKill();
@@ -360,15 +365,15 @@ public class AdvanceManager {
         for (int i = 0; i < npcsToKill.size() && i < npcKillCounts.size(); i++) {
             final int goal = npcKillCounts.get(i);
             result.add(new ObjectiveData(ObjectiveType.KILL_NPC, stageInfo +
-                    "Kill NPC: " + goal,
-                    goal, npcsToKill.get(i).toString()));
+                    BukkitLang.get("kill").replace("<mob>", "NPC")
+                    .replace(": <count>", ""), goal, npcsToKill.get(i).toString()));
         }
         final List<EntityType> tameMobs = stage.getMobsToTame();
         final List<Integer> tameCounts = stage.getMobNumToTame();
         for (int i = 0; i < tameMobs.size() && i < tameCounts.size(); i++) {
             final int goal = tameCounts.get(i);
             result.add(new ObjectiveData(ObjectiveType.TAME_MOB, stageInfo +
-                    BukkitLang.get("Tame")
+                    BukkitLang.get("tame")
                     .replace(": <count>", ""), goal, tameMobs.get(i).toString()));
         }
         final Integer fishToCatch = stage.getFishToCatch();
